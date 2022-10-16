@@ -10,7 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.squareup.picasso.Picasso
 
-class CustomAdapter(private val context: Context, val mList: List<ItemsViewModel>) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
+class CustomAdapter(private val context: Context, private val mList: List<ItemsViewModel>) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
+    private var clickListener: ClickListener? = null
+
+    interface ClickListener {
+        fun onItemClick(view:View,position: Int)
+    }
 
     // create new views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,15 +30,15 @@ class CustomAdapter(private val context: Context, val mList: List<ItemsViewModel
     // binds the list items to a view
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val ItemsViewModell = mList[position]
+        val ItemsViewModel = mList[position]
 
         // sets the image to the imageview from our itemHolder class
-        Glide.with(context).load(ItemsViewModell.image).into(holder.imageView)
+        Glide.with(context).load(ItemsViewModel.image).into(holder.imageViews)
 
         // sets the text to the textview from our itemHolder class
-        holder.textView.text = ItemsViewModell.text
-        holder.textView2.text = ItemsViewModell.text1
-        holder.textView3.text = ItemsViewModell.text2
+        holder.textViews.text = ItemsViewModel.text
+        holder.textView2s.text = ItemsViewModel.text1
+        holder.textView3s.text = ItemsViewModel.text2
 
     }
 
@@ -42,11 +47,28 @@ class CustomAdapter(private val context: Context, val mList: List<ItemsViewModel
         return mList.size
     }
 
+    fun setOnItemClickListener(clickListener: ClickListener){
+        this.clickListener = clickListener
+    }
+
     // Holds the views for adding it to image and text
-    class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
-        val textView: TextView = itemView.findViewById(R.id.textView)
-        val textView2: TextView = itemView.findViewById(R.id.textView2)
-        val textView3: TextView = itemView.findViewById(R.id.textView3)
-        val imageView: ImageView = itemView.findViewById(R.id.imageview)
+    inner class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView), View.OnClickListener {
+        val textViews: TextView = itemView.findViewById(R.id.textView)
+        val textView2s: TextView = itemView.findViewById(R.id.textView2)
+        val textView3s: TextView = itemView.findViewById(R.id.textView3)
+        val imageViews: ImageView = itemView.findViewById(R.id.imageview)
+
+        init {
+            if (clickListener != null){
+                itemView.setOnClickListener(this)
+            }
+        }
+
+        override fun onClick(itView: View){
+            if (itView != null){
+                clickListener?.onItemClick(itView,bindingAdapterPosition)
+            }
+        }
+
     }
 }
