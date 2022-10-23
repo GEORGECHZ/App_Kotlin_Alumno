@@ -5,7 +5,7 @@
         android:title="Eliminar"/>
 
     <item
-        android:id="@+id/editar"
+        android:id="@+id/edit"
         android:title="Modificar"/>
 
     <item
